@@ -41,7 +41,7 @@ Builder.load_string("""
         Button:
             text: 'Login'
             font_size:50
-            on_press: root.manager.current = 'dash'
+            on_press: root.getInput()
         Label:
             text: 'Or new user:'
             font_size: '40sp'
@@ -55,7 +55,7 @@ Builder.load_string("""
         orientation: 'vertical'
         Label:
             text: 'Create Account'
-            font_size: '130sp'    
+            font_size: '130sp'
         Label:
             text: 'Username: (required)'
             font_size: '40sp'
@@ -86,13 +86,13 @@ Builder.load_string("""
             text: 'Sign In'
             font_size:50
             on_press: root.manager.current = 'login'
-            
+
 <Dashboard>:
     BoxLayout:
         orientation: 'vertical'
         Label:
             text: 'Dashboard'
-            font_size: '130sp'       
+            font_size: '130sp'
         Label:
             text: 'Monthly Budget: '
             font_size: '40sp'
@@ -120,13 +120,13 @@ Builder.load_string("""
             text: 'Logout'
             font_size:50
             on_press: root.manager.current = 'login'
-    
+
 <monthlyBudget>:
     BoxLayout:
         orientation: 'vertical'
         Label:
             text: 'Update Budget'
-            font_size: '130sp'       
+            font_size: '130sp'
         Label:
             text: 'New Budget: '
             font_size: '40sp'
@@ -140,11 +140,11 @@ Builder.load_string("""
             text: 'Back to Dashboard'
             font_size:50
             on_press: root.manager.current = 'dash'
-        
+
 <Graphs>:
     BoxLayout:
         orientation: 'vertical'
-        
+
 <enterExpenses>:
     BoxLayout:
         orientation: 'vertical'
@@ -176,6 +176,9 @@ Builder.load_string("""
 
 # Declare both screens
 class LoginScreen(Screen):
+    def getInput(self):
+        print ("hello")
+        sm.current = 'dash'
     pass
 
 class CreateAccount(Screen):
@@ -193,6 +196,9 @@ class Graphs(Screen):
 class enterExpenses(Screen):
     pass
 
+def say_hello(self):
+        print ("hello")
+
 # Create the screen manager
 sm = ScreenManager()
 sm.add_widget(LoginScreen(name='login'))
@@ -202,10 +208,12 @@ sm.add_widget(monthlyBudget(name='monthB'))
 sm.add_widget(Graphs(name='graph'))
 sm.add_widget(enterExpenses(name='expense'))
 
+
 class TestApp(App):
 
     def build(self):
         self.title = 'Foot Prints'
         return sm
+
 if __name__ == '__main__':
    TestApp().run()
