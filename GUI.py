@@ -7,6 +7,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.config import Config
 from kivy.uix.dropdown import DropDown
+from kivy.uix.popup import Popup
 
 Config.set('graphics', 'width', '1000')
 Config.set('graphics', 'height', '1000')
@@ -29,13 +30,15 @@ Builder.load_string("""
             text: 'Username:'
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            id: usernameInput
+            multiline: False
             font_size:'50sp'
         Label:
             text: 'Password:'
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            id:passwordInput
+            multiline: False
             font_size:'50sp'
             password: 'True'
         Button:
@@ -177,8 +180,24 @@ Builder.load_string("""
 # Declare both screens
 class LoginScreen(Screen):
     def getInput(self):
-        print ("hello")
-        sm.current = 'dash'
+
+        # get user input for username
+        uname = self.ids.usernameInput.text
+
+        # get user input for password
+        pwd = self.ids.passwordInput.text
+
+        correctPwd = False #call function to check if username and password are correct
+
+        print(uname)
+        print(pwd)
+
+        if(correctPwd):
+            print('pwd is correct!!')
+            sm.current = 'dash'
+        else:
+            popup = Popup(title='Test popup', content=Label(text='Hello world'), auto_dismiss=False,size=(400, 400))
+            popup.open()
     pass
 
 class CreateAccount(Screen):
