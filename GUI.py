@@ -187,7 +187,7 @@ class LoginScreen(Screen):
         # get user input for password
         pwd = self.ids.passwordInput.text
 
-        correctPwd = False #call function to check if username and password are correct
+        correctPwd = True #call function to check if username and password are correct
 
         print(uname)
         print(pwd)
@@ -196,7 +196,8 @@ class LoginScreen(Screen):
             print('pwd is correct!!')
             sm.current = 'dash'
         else:
-            popup = Popup(title='Test popup', content=Label(text='Hello world'), auto_dismiss=False,size=(400, 400))
+            #error msg when username or password is not correct
+            popup = Popup(title='Error', content=Label(text='Error, username or password is not correct, please enter again. To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
             popup.open()
     pass
 
@@ -214,9 +215,6 @@ class Graphs(Screen):
 
 class enterExpenses(Screen):
     pass
-
-def say_hello(self):
-        print ("hello")
 
 # Create the screen manager
 sm = ScreenManager()
