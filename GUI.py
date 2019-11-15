@@ -63,25 +63,28 @@ Builder.load_string("""
             text: 'Username: (required)'
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            id: createUsernameInput
+            multiline: False
             font_size:'50sp'
         Label:
             text: 'Password: (required)'
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            id: createPasswordInput
+            multiline: False
             font_size:'50sp'
             password: 'True'
         Label:
             text: 'Monthly Budget Amount: (required)'
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            id: monthBudget
+            multiline: False
             font_size:'50sp'
         Button:
             text: 'Register'
             font_size:50
-            on_press: root.manager.current = 'dash'
+            on_press: root.createUser()
         Label:
             text: 'Have an account? '
             font_size: '20sp'
@@ -177,31 +180,61 @@ Builder.load_string("""
             on_press: root.manager.current = 'dash'
 """)
 
+
 # Declare both screens
 class LoginScreen(Screen):
     def getInput(self):
-
         # get user input for username
         uname = self.ids.usernameInput.text
 
         # get user input for password
         pwd = self.ids.passwordInput.text
 
-        correctPwd = True #call function to check if username and password are correct
+        correctLogin = True #call function to check if username and password are correct
 
-        print(uname)
-        print(pwd)
+        #print for error checking
+       # print(uname)
+       # print(pwd)
 
-        if(correctPwd):
-            print('pwd is correct!!')
+        if(correctLogin):
+            #print for error checking
+           # print('pwd is correct!!')
             sm.current = 'dash'
         else:
             #error msg when username or password is not correct
-            popup = Popup(title='Error', content=Label(text='Error, username or password is not correct, please enter again. To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup = Popup(title='Error', content=Label(text='Error, username or password is not correct, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
             popup.open()
     pass
 
 class CreateAccount(Screen):
+    def createUser(self):
+          # get user input for username
+        uname = self.ids.createUsernameInput.text
+
+        # get user input for password
+        pwd = self.ids.createPasswordInput.text
+
+         # get user input for monthly budget
+        mBudget = self.ids.monthBudget.text
+
+        if(mBudget.isdigit()):
+            loginSuccessful = True # call function to check if username and password are correct
+
+            if(loginSuccessful):
+                sm.current = 'dash'
+            else:
+                 #error msg when create account is not successful
+                popup = Popup(title='Error', content=Label(text='Error, create account was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+        else:
+            #error msg when monthly budget is not a number
+            popup = Popup(title='Error', content=Label(text='Error, monthly budget must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+
+        print(uname)
+        print(pwd)
+        print(mBudget)
+
     pass
 
 class Dashboard(Screen):
