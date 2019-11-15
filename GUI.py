@@ -138,11 +138,13 @@ Builder.load_string("""
             text: 'New Budget: '
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            id: monthlyBudgetAmt
+            multiline: False
             font_size:'50sp'
         Button:
             text: 'Save'
             font_size:50
+            on_press: root.updateBudget()
         Button:
             text: 'Back to Dashboard'
             font_size:50
@@ -260,6 +262,34 @@ class Dashboard(Screen):
     pass
 
 class monthlyBudget(Screen):
+    def updateBudget(self):
+         # get user input for monthly budget
+        mBudget = self.ids.monthlyBudgetAmt.text
+
+        if(mBudget.isdigit()):
+            if(mBudget != ''):
+                budgetSuccessful = True # call function to change monthly budget
+
+                if(budgetSuccessful):
+                    #error msg when create account is not successful
+                    popup = Popup(title='Success', content=Label(text='Success, monthly budget has been updated. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                    popup.open()
+                else:
+                     #error msg when budget is not successful
+                    popup = Popup(title='Error', content=Label(text='Error, budget change was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                    popup.open()
+            else:
+                #error msg when budget is empty
+                popup = Popup(title='Error', content=Label(text='Error, budget must be filled out, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+        else:
+                #error msg when monthly budget is not a number
+                popup = Popup(title='Error', content=Label(text='Error, monthly budget must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+
+       #printing for error checking
+        # print(mBudget)
+
     pass
 
 class Graphs(Screen):
