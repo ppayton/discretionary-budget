@@ -160,23 +160,82 @@ Builder.load_string("""
         Label:
             text: 'Enter Expense'
             font_size: '130sp'
-        Label:
-            text: 'Category: '
-            font_size: '40sp'
-        DropDown:
-        Label:
-            text: 'Sub-Category: '
-            font_size: '40sp'
-        DropDown:
+
+        Button:
+            id: categoryBtn
+            text: 'Category'
+            on_release: categoryDropdown.open(self)
+            size_hint_y: None
+            height: '48dp'
+
+            Widget:
+                on_parent: categoryDropdown.dismiss()
+
+            DropDown:
+                id: categoryDropdown
+                on_select: categoryBtn.text = 'Selected value: {}'.format(args[1])
+
+                Button:
+                    text: 'Value A'
+                    size_hint_y: None
+                    height: '48dp'
+                    on_release: categoryDropdown.select('A')
+
+                Button:
+                    text: 'Value B'
+                    size_hint_y: None
+                    height: '48dp'
+                    on_release: categoryDropdown.select('B')
+
+                Button:
+                    text: 'Value C'
+                    size_hint_y: None
+                    height: '48dp'
+                    on_release: categoryDropdown.select('C')
+
+        Button:
+            id: subBtn
+            text: 'Sub-Category'
+            on_release: subCategoryDropdown.open(self)
+            size_hint_y: None
+            height: '48dp'
+
+            Widget:
+                on_parent: subCategoryDropdown.dismiss()
+
+            DropDown:
+
+                id: subCategoryDropdown
+                on_select: subBtn.text = 'Selected value: {}'.format(args[1])
+
+                Button:
+                    text: 'Value A'
+                    size_hint_y: None
+                    height: '48dp'
+                    on_release: subCategoryDropdown.select('A')
+
+                Button:
+                    text: 'Value B'
+                    size_hint_y: None
+                    height: '48dp'
+                    on_release: subCategoryDropdown.select('B')
+
+                Button:
+                    text: 'Value C'
+                    size_hint_y: None
+                    height: '48dp'
+                    on_release: subCategoryDropdown.select('C')
+
         Label:
             text: 'Amount:'
             font_size: '40sp'
         TextInput:
-            multiline: 'false'
+            multiline: False
             font_size:'50sp'
         Button:
             text: 'Submit'
             font_size:50
+            on_press: root.addExpense()
         Button:
             text: 'Back to Dashboard'
             font_size:50
@@ -296,7 +355,9 @@ class Graphs(Screen):
     pass
 
 class enterExpenses(Screen):
-    pass
+     def addExpense(self):
+        print('I come here')
+     pass
 
 # Create the screen manager
 sm = ScreenManager()
