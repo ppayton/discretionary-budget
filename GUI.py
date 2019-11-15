@@ -8,6 +8,7 @@ from kivy.uix.button import Button
 from kivy.config import Config
 from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
+from kivy.properties import StringProperty
 
 Config.set('graphics', 'width', '1000')
 Config.set('graphics', 'height', '1000')
@@ -103,13 +104,13 @@ Builder.load_string("""
             text: 'Monthly Budget: '
             font_size: '40sp'
         Label:
-            text: 'test amount'
+            text: root.monthlyBudgetAmt
             font_size: '40sp'
         Label:
             text: 'Remaining Monthly Budget: '
             font_size: '40sp'
         Label:
-            text: 'test amount'
+            text: root.remMonthlyBudgetAmt
             font_size: '40sp'
         Button:
             text: 'Update Monthly Budget'
@@ -231,13 +232,20 @@ class CreateAccount(Screen):
             popup = Popup(title='Error', content=Label(text='Error, monthly budget must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
             popup.open()
 
-        print(uname)
-        print(pwd)
-        print(mBudget)
+        #print for error checking
+        #print(pwd)
+        #print(mBudget)
 
     pass
 
 class Dashboard(Screen):
+    # need function to get current values for monthly budget and remaining monthly budget from database
+    monthlyBudgetAmt = StringProperty()
+    monthlyBudgetAmt = '500';
+
+    remMonthlyBudgetAmt = StringProperty()
+    remMonthlyBudgetAmt = '200';
+
     pass
 
 class monthlyBudget(Screen):
