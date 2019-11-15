@@ -196,14 +196,18 @@ class LoginScreen(Screen):
         #print for error checking
        # print(uname)
        # print(pwd)
-
-        if(correctLogin):
-            #print for error checking
-           # print('pwd is correct!!')
-            sm.current = 'dash'
+        if(uname != '' and pwd != ''):
+            if(correctLogin):
+                #print for error checking
+               # print('pwd is correct!!')
+                sm.current = 'dash'
+            else:
+                #error msg when username or password is not correct
+                popup = Popup(title='Error', content=Label(text='Error, username or password is not correct, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
         else:
-            #error msg when username or password is not correct
-            popup = Popup(title='Error', content=Label(text='Error, username or password is not correct, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+         #error msg when fields are empty
+            popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
             popup.open()
     pass
 
@@ -217,20 +221,27 @@ class CreateAccount(Screen):
 
          # get user input for monthly budget
         mBudget = self.ids.monthBudget.text
+        if(uname == ''):
+            print('this is empty')
 
         if(mBudget.isdigit()):
-            loginSuccessful = True # call function to check if username and password are correct
+            if(uname != '' and pwd != '' and mBudget != ''):
+                loginSuccessful = True # call function to check if username and password are correct
 
-            if(loginSuccessful):
-                sm.current = 'dash'
+                if(loginSuccessful):
+                    sm.current = 'dash'
+                else:
+                     #error msg when create account is not successful
+                    popup = Popup(title='Error', content=Label(text='Error, create account was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                    popup.open()
             else:
-                 #error msg when create account is not successful
-                popup = Popup(title='Error', content=Label(text='Error, create account was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                #error msg when fields are empty
+                popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
                 popup.open()
         else:
-            #error msg when monthly budget is not a number
-            popup = Popup(title='Error', content=Label(text='Error, monthly budget must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-            popup.open()
+                #error msg when monthly budget is not a number
+                popup = Popup(title='Error', content=Label(text='Error, monthly budget must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
 
         #print for error checking
         #print(pwd)
