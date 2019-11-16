@@ -157,6 +157,7 @@ Builder.load_string("""
 <enterExpenses>:
     BoxLayout:
         orientation: 'vertical'
+
         Label:
             text: 'Enter Expense'
             font_size: '130sp'
@@ -166,70 +167,162 @@ Builder.load_string("""
             text: 'Category'
             on_release: categoryDropdown.open(self)
             size_hint_y: None
-            height: '48dp'
+            height: '95dp'
 
             Widget:
                 on_parent: categoryDropdown.dismiss()
+                categoryDropdown: categoryDropdown.__self__
 
             DropDown:
                 id: categoryDropdown
-                on_select: categoryBtn.text = 'Selected value: {}'.format(args[1])
+                on_select: categoryBtn.text = '{}'.format(args[1])
 
                 Button:
-                    text: 'Value A'
+                    text: 'Improvements/Upgrades'
                     size_hint_y: None
-                    height: '48dp'
-                    on_release: categoryDropdown.select('A')
+                    height: '95dp'
+                    on_release: categoryDropdown.select('Improvements/Upgrades')
 
                 Button:
-                    text: 'Value B'
+                    text: 'Social/Entertainment'
                     size_hint_y: None
-                    height: '48dp'
-                    on_release: categoryDropdown.select('B')
+                    height: '95dp'
+                    on_release: categoryDropdown.select('Social/Entertainment')
 
                 Button:
-                    text: 'Value C'
+                    text: 'Personal Care & Hygiene'
                     size_hint_y: None
-                    height: '48dp'
-                    on_release: categoryDropdown.select('C')
+                    height: '95dp'
+                    on_release: categoryDropdown.select('Personal Care & Hygiene')
+
+                Button:
+                    text: 'Savings'
+                    size_hint_y: None
+                    height: '95dp'
+                    on_release: categoryDropdown.select('Savings')
 
         Button:
             id: subBtn
             text: 'Sub-Category'
             on_release: subCategoryDropdown.open(self)
             size_hint_y: None
-            height: '48dp'
+            height: '95dp'
 
             Widget:
                 on_parent: subCategoryDropdown.dismiss()
+                subCategoryDropdown: subCategoryDropdown.__self__
 
             DropDown:
-
                 id: subCategoryDropdown
-                on_select: subBtn.text = 'Selected value: {}'.format(args[1])
+                on_select: subBtn.text = '{}'.format(args[1])
 
                 Button:
-                    text: 'Value A'
+                    text: 'Home'
                     size_hint_y: None
-                    height: '48dp'
-                    on_release: subCategoryDropdown.select('A')
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Home')
 
                 Button:
-                    text: 'Value B'
+                    text: 'Automotive'
                     size_hint_y: None
-                    height: '48dp'
-                    on_release: subCategoryDropdown.select('B')
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Automotive')
 
                 Button:
-                    text: 'Value C'
+                    text: 'Electronic'
                     size_hint_y: None
-                    height: '48dp'
-                    on_release: subCategoryDropdown.select('C')
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Electronic')
+
+                Button:
+                    text: 'Dining Out'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Dining Out')
+
+                Button:
+                    text: 'Special Events'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Special Events')
+
+                Button:
+                    text: 'Games'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Games')
+
+                Button:
+                    text: 'Gifts'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Gifts')
+
+                Button:
+                    text: 'Subscriptions'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Subscriptions')
+
+                Button:
+                    text: 'Cosmetics'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Cosmetics')
+
+                Button:
+                    text: 'Clothes'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Clothes')
+
+                Button:
+                    text: 'Toiletries'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Toiletries')
+
+                Button:
+                    text: 'Memberships'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Memberships')
+
+                Button:
+                    text: 'Emergency Fund'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Emergency Fund')
+
+                Button:
+                    text: 'Asset Deposits'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Asset Deposits')
+
+                Button:
+                    text: 'Vacations'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Vacations')
+
+                Button:
+                    text: 'Appliances'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Appliances')
+
+                Button:
+                    text: 'Other'
+                    size_hint_y: None
+                    height: '40dp'
+                    on_release: subCategoryDropdown.select('Other')
 
         Label:
             text: 'Amount:'
             font_size: '40sp'
         TextInput:
+            id: expenseAmt
             multiline: False
             font_size:'50sp'
         Button:
@@ -242,6 +335,13 @@ Builder.load_string("""
             on_press: root.manager.current = 'dash'
 """)
 
+def validSelection(category, subcategory ):
+    print('this is a test ')
+    improveGroup = ('Improvements/Upgrades','Home','Automotive','Electronic','Other' )
+    socialGroup = ('Social/Entertainment','Dining Out','Special Events','Games', 'Gifts','Subscriptions','Other')
+    personalGroup = ('Personal Care & Hygiene', 'Cosmetics', 'Clothes', 'Toiletries', 'Memberships', 'Other')
+    savingGroup = ('Savings','Emergency Fund', 'Asset Deposits', 'Vacations', 'Appliances', 'Other')
+    return True
 
 # Declare both screens
 class LoginScreen(Screen):
@@ -282,8 +382,6 @@ class CreateAccount(Screen):
 
          # get user input for monthly budget
         mBudget = self.ids.monthBudget.text
-        if(uname == ''):
-            print('this is empty')
 
         if(mBudget.isdigit()):
             if(uname != '' and pwd != '' and mBudget != ''):
@@ -330,11 +428,11 @@ class monthlyBudget(Screen):
                 budgetSuccessful = True # call function to change monthly budget
 
                 if(budgetSuccessful):
-                    #error msg when create account is not successful
+                    #error msg when update budget is successful
                     popup = Popup(title='Success', content=Label(text='Success, monthly budget has been updated. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
                     popup.open()
                 else:
-                     #error msg when budget is not successful
+                     #error msg when update budget is not successful
                     popup = Popup(title='Error', content=Label(text='Error, budget change was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
                     popup.open()
             else:
@@ -356,7 +454,42 @@ class Graphs(Screen):
 
 class enterExpenses(Screen):
      def addExpense(self):
-        print('I come here')
+
+         #get value for category
+         category = self.ids.categoryBtn.text
+
+         #get value for sub-category
+         subcategory = self.ids.subBtn.text
+
+         expenseAmt = self.ids.expenseAmt.text
+
+         #printing for error checking
+         print(category)
+         print(subcategory)
+         print(expenseAmt)
+
+         if(category == 'Category' or subcategory == 'Sub-Category' or expenseAmt == ''):
+          #error msg when field is empty
+                popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+         else:
+                if(expenseAmt.isdigit()):
+                    expenseSuccessful = True #function call to enter in an expense
+
+                    if(validSelection(category, subcategory)):
+                        if(expenseSuccessful):
+                            #error msg when enter expense is  successful
+                            popup = Popup(title='Success', content=Label(text='Success, expense has been entered. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                            popup.open()
+                        else:
+                             #error msg when enter expense is not successful
+                            popup = Popup(title='Error', content=Label(text='Error, enter expense was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                            popup.open()
+                else:
+                     #error msg when expense is not a number
+                    popup = Popup(title='Error', content=Label(text='Error, expense amount must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                    popup.open()
+
      pass
 
 # Create the screen manager
