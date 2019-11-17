@@ -10,6 +10,7 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
 import re
+from kivy.uix.spinner import Spinner
 
 Config.set('graphics', 'width', '1000')
 Config.set('graphics', 'height', '1000')
@@ -124,6 +125,10 @@ Builder.load_string("""
             text: 'Enter Expenses'
             font_size:50
             on_press: root.manager.current = 'expense'
+        Button:
+            text: 'Delete Expense'
+            font_size:50
+            on_press: root.manager.current = 'delete'
         Button:
             text: 'Logout'
             font_size:50
@@ -343,6 +348,27 @@ Builder.load_string("""
             on_press: root.manager.current = 'dash'
 
 <deleteExpense>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Delete Expense'
+            font_size: '130sp'
+        Spinner:
+            id: expenseList
+            size_hint: None, None
+            size: 1000, 44
+            pos_hint: {'center': (.5, .5)}
+            text: 'Select an expense to delete'
+        Label:
+            text: ''
+        Button:
+            text: 'Delete'
+            font_size:50
+            on_press: root.deleteExpense()
+        Button:
+            text: 'Back to Dashboard'
+            font_size:50
+            on_press: root.manager.current = 'dash'
 
 """)
 
@@ -502,37 +528,32 @@ class Graphs(Screen):
 
 class deleteExpense(Screen):
      def __init__(self, **kwargs):
-         dropdown = DropDown()
          super(deleteExpense, self).__init__(**kwargs)
+         #call function to get list of strings of expense line items
+         self.ids.expenseList.values= ['1000: Personal Care & Hygiene - Cosmetic $150', '1001: Personal Care & Hygiene - Cosmetic $100', '1002: Personal Care & Hygiene: Cosmetic $3000']
 
-         for index in range(10):
-    # When adding widgets, we need to specify the height manually
-    # (disabling the size_hint_y) so the dropdown can calculate
-    # the area it needs.
+     def deleteExpense(self):
+         expense = self.ids.expenseList.text
 
-            btn = Button(text='Value %d' % index, size_hint_y=None, height=44)
+         if expense != 'Select an expense to delete':
+            deleteSuccessful = True # call function to delete expense. return true if successful
 
-    # for each button, attach a callback that will call the select() method
-    # on the dropdown. We'll pass the text of the button as the data of the
-    # selection.
-            btn.bind(on_release=lambda btn: dropdown.select(btn.text))
+            temp = expense.split(':')
 
-    # then add the button inside the dropdown
-            dropdown.add_widget(btn)
+            transactionId = temp[0]
 
-# create a big main button
-         mainbutton = Button(text='Hello', size_hint=(None, None))
-
-# show the dropdown menu when the main button is released
-# note: all the bind() calls pass the instance of the caller (here, the
-# mainbutton instance) as the first argument of the callback (here,
-# dropdown.open.).
-         mainbutton.bind(on_release=dropdown.open)
-
-# one last thing, listen for the selection in the dropdown list and
-# assign the data to the button text.
-         dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))
-         self.add_widget(dropdown)
+            if(deleteSuccessful):
+            # msg when enter expense is deleted successful
+                popup = Popup(title='Success', content=Label(text='Success, expense has been deleted. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+            else:
+                 #error msg when delete expense is not successful
+                popup = Popup(title='Error', content=Label(text='Error, delete expense was not successful, please try again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+         else:
+              #error msg when delete expense has bot been selected
+            popup = Popup(title='Error', content=Label(text='Error, please select an expense to delete. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
      pass
 
 class enterExpenses(Screen):
@@ -568,7 +589,7 @@ class enterExpenses(Screen):
 
                             expenseSuccessful = True #function call to enter in an expense
                             if(expenseSuccessful):
-                                #error msg when enter expense is  successful
+                                # msg when enter expense is  successful
                                 popup = Popup(title='Success', content=Label(text='Success, expense has been entered. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
                                 popup.open()
                             else:
