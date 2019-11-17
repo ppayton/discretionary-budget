@@ -9,6 +9,7 @@ from kivy.config import Config
 from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
+import re
 
 Config.set('graphics', 'width', '1000')
 Config.set('graphics', 'height', '1000')
@@ -319,6 +320,13 @@ Builder.load_string("""
                     on_release: subCategoryDropdown.select('Other')
 
         Label:
+            text: 'Date (mm/dd/yyyy):'
+            font_size: '40sp'
+        TextInput:
+            id: dateInput
+            multiline: False
+            font_size:'50sp'
+        Label:
             text: 'Amount:'
             font_size: '40sp'
         TextInput:
@@ -333,16 +341,52 @@ Builder.load_string("""
             text: 'Back to Dashboard'
             font_size:50
             on_press: root.manager.current = 'dash'
+
+<deleteExpense>:
+
 """)
 
 def validSelection(category, subcategory ):
-    print('this is a test ')
     improveGroup = ('Improvements/Upgrades','Home','Automotive','Electronic','Other' )
     socialGroup = ('Social/Entertainment','Dining Out','Special Events','Games', 'Gifts','Subscriptions','Other')
     personalGroup = ('Personal Care & Hygiene', 'Cosmetics', 'Clothes', 'Toiletries', 'Memberships', 'Other')
     savingGroup = ('Savings','Emergency Fund', 'Asset Deposits', 'Vacations', 'Appliances', 'Other')
-    return True
 
+    # check whether or not the selected category and subcategory are compatible
+    if category in improveGroup:
+        if subcategory in improveGroup:
+            return True
+        else:
+         #error msg when category and subcategory do not match
+            popup = Popup(title='Error', content=Label(text='Error, for the improvements and upgrades category you must choose one of the following subcategories: \n Home, automotive, electronic, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+            return False
+    elif category in socialGroup:
+        if subcategory in socialGroup:
+            return True
+        else:
+         #error msg when category and subcategory do not match
+            popup = Popup(title='Error', content=Label(text='Error, for the social and entertainment category you must choose one of the following subcategories: \n Dining out, Special Events, Games, Gifts, Subscriptions, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+            return False
+    elif category in personalGroup:
+        if subcategory in personalGroup:
+            return True
+        else:
+         #error msg when category and subcategory do not match
+            popup = Popup(title='Error', content=Label(text='Error, for the Personal Care and hygiene category you must choose one of the following subcategories: \n Cosmetics, Clothes, Toiletries, Memberships, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+            return False
+    elif category in savingGroup:
+        if subcategory in savingGroup:
+            return True
+        else:
+         #error msg when category and subcategory do not match
+            popup = Popup(title='Error', content=Label(text='Error, for the Savings category you must choose one of the following subcategories: \n Emergency Fund, Asset Deposits, Vacations, Appliances, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+            return False
+    else:
+        return False
 # Declare both screens
 class LoginScreen(Screen):
     def getInput(self):
@@ -354,7 +398,7 @@ class LoginScreen(Screen):
 
         correctLogin = True #call function to check if username and password are correct
 
-        #print for error checking
+       #print for error checking
        # print(uname)
        # print(pwd)
         if(uname != '' and pwd != ''):
@@ -373,6 +417,8 @@ class LoginScreen(Screen):
     pass
 
 class CreateAccount(Screen):
+
+
     def createUser(self):
           # get user input for username
         uname = self.ids.createUsernameInput.text
@@ -389,6 +435,8 @@ class CreateAccount(Screen):
 
                 if(loginSuccessful):
                     sm.current = 'dash'
+                    # set user id
+                    # set password
                 else:
                      #error msg when create account is not successful
                     popup = Popup(title='Error', content=Label(text='Error, create account was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
@@ -452,7 +500,44 @@ class monthlyBudget(Screen):
 class Graphs(Screen):
     pass
 
+class deleteExpense(Screen):
+     def __init__(self, **kwargs):
+         dropdown = DropDown()
+         super(deleteExpense, self).__init__(**kwargs)
+
+         for index in range(10):
+    # When adding widgets, we need to specify the height manually
+    # (disabling the size_hint_y) so the dropdown can calculate
+    # the area it needs.
+
+            btn = Button(text='Value %d' % index, size_hint_y=None, height=44)
+
+    # for each button, attach a callback that will call the select() method
+    # on the dropdown. We'll pass the text of the button as the data of the
+    # selection.
+            btn.bind(on_release=lambda btn: dropdown.select(btn.text))
+
+    # then add the button inside the dropdown
+            dropdown.add_widget(btn)
+
+# create a big main button
+         mainbutton = Button(text='Hello', size_hint=(None, None))
+
+# show the dropdown menu when the main button is released
+# note: all the bind() calls pass the instance of the caller (here, the
+# mainbutton instance) as the first argument of the callback (here,
+# dropdown.open.).
+         mainbutton.bind(on_release=dropdown.open)
+
+# one last thing, listen for the selection in the dropdown list and
+# assign the data to the button text.
+         dropdown.bind(on_select=lambda instance, x: setattr(mainbutton, 'text', x))
+         self.add_widget(dropdown)
+     pass
+
 class enterExpenses(Screen):
+     #def __init__(self, **kwargs):
+
      def addExpense(self):
 
          #get value for category
@@ -463,33 +548,41 @@ class enterExpenses(Screen):
 
          expenseAmt = self.ids.expenseAmt.text
 
+         date = self.ids.dateInput.text
+
          #printing for error checking
-         print(category)
-         print(subcategory)
-         print(expenseAmt)
+         #print(category)
+         #print(subcategory)
+         #print(expenseAmt)
 
-         if(category == 'Category' or subcategory == 'Sub-Category' or expenseAmt == ''):
-          #error msg when field is empty
-                popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-                popup.open()
-         else:
-                if(expenseAmt.isdigit()):
-                    expenseSuccessful = True #function call to enter in an expense
-
-                    if(validSelection(category, subcategory)):
-                        if(expenseSuccessful):
-                            #error msg when enter expense is  successful
-                            popup = Popup(title='Success', content=Label(text='Success, expense has been entered. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-                            popup.open()
-                        else:
-                             #error msg when enter expense is not successful
-                            popup = Popup(title='Error', content=Label(text='Error, enter expense was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-                            popup.open()
-                else:
-                     #error msg when expense is not a number
-                    popup = Popup(title='Error', content=Label(text='Error, expense amount must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+         # use regex to check if date is in the right format
+         if(re.search("[\d]{1,2}/[\d]{1,2}/[\d]{4}",date)):
+             if(category == 'Category' or subcategory == 'Sub-Category' or expenseAmt == ''):
+              #error msg when field is empty
+                    popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
                     popup.open()
+             else:
+                    if(expenseAmt.isdigit()):
 
+                        if(validSelection(category, subcategory)):
+
+                            expenseSuccessful = True #function call to enter in an expense
+                            if(expenseSuccessful):
+                                #error msg when enter expense is  successful
+                                popup = Popup(title='Success', content=Label(text='Success, expense has been entered. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                                popup.open()
+                            else:
+                                 #error msg when enter expense is not successful
+                                popup = Popup(title='Error', content=Label(text='Error, enter expense was not successful, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                                popup.open()
+                    else:
+                         #error msg when expense is not a number
+                        popup = Popup(title='Error', content=Label(text='Error, expense amount must be a number, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                        popup.open()
+         else:
+             #error msg when date it not properly formatted
+             popup = Popup(title='Error', content=Label(text='Error, date must be formatted as mm/dd/yyyy, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+             popup.open()
      pass
 
 # Create the screen manager
@@ -500,6 +593,7 @@ sm.add_widget(Dashboard(name='dash'))
 sm.add_widget(monthlyBudget(name='monthB'))
 sm.add_widget(Graphs(name='graph'))
 sm.add_widget(enterExpenses(name='expense'))
+sm.add_widget(deleteExpense(name='delete'))
 
 
 class TestApp(App):
