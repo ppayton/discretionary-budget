@@ -9,12 +9,16 @@ from kivy.config import Config
 from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
-import re
 from kivy.uix.spinner import Spinner
+import matplotlib.pyplot as plt
+import re
+import os
+
 
 Config.set('graphics', 'width', '1000')
 Config.set('graphics', 'height', '1000')
 Config.write()
+
 
 # Create both screens. Please note the root.manager.current: this is how
 # you can control the ScreenManager from kv. Each screen has by default a
@@ -119,8 +123,9 @@ Builder.load_string("""
             font_size:50
             on_press: root.manager.current = 'monthB'
         Button:
-            text: 'Display Graphs and Reports'
+            text: 'Download Graphs'
             font_size:50
+            on_press: root.manager.current = 'graph'
         Button:
             text: 'Enter Expenses'
             font_size:50
@@ -132,7 +137,7 @@ Builder.load_string("""
         Button:
             text: 'Logout'
             font_size:50
-            on_press: root.manager.current = 'login'
+            on_press: root.logoutUser()
 
 <monthlyBudget>:
     BoxLayout:
@@ -160,6 +165,42 @@ Builder.load_string("""
     BoxLayout:
         orientation: 'vertical'
 
+        Label:
+            text: 'Download Graph'
+            font_size: '130sp'
+        Label:
+            text: 'Generate graphs for: '
+            font_size: '40sp'
+        Spinner:
+            id: timeList
+            size_hint: None, None
+            size: 1000, 44
+            pos_hint: {'center': (.5, .5)}
+            text: 'Month or Year'
+        Label:
+            text: 'Select type of graph to generate: '
+            font_size: '40sp'
+        Spinner:
+            id: graphList
+            size_hint: None, None
+            size: 1000, 44
+            pos_hint: {'center': (.5, .5)}
+            text: 'Type of Graph'
+        Label:
+            text: 'Location to Save Graph:'
+            font_size: '40sp'
+        TextInput:
+            id: saveLocation
+            multiline: False
+            font_size:'50sp'
+        Button:
+            text: 'Download'
+            font_size:50
+            on_press:  root.downloadGraph()
+        Button:
+            text: 'Back to Dashboard'
+            font_size:50
+            on_press: root.manager.current = 'dash'
 <enterExpenses>:
     BoxLayout:
         orientation: 'vertical'
@@ -167,163 +208,19 @@ Builder.load_string("""
         Label:
             text: 'Enter Expense'
             font_size: '130sp'
-
-        Button:
-            id: categoryBtn
+        Spinner:
+            id: categoryDropdown
+            size_hint: None, None
+            size: 1000, 44
+            pos_hint: {'center': (.5, .5)}
             text: 'Category'
-            on_release: categoryDropdown.open(self)
-            size_hint_y: None
-            height: '95dp'
-
-            Widget:
-                on_parent: categoryDropdown.dismiss()
-                categoryDropdown: categoryDropdown.__self__
-
-            DropDown:
-                id: categoryDropdown
-                on_select: categoryBtn.text = '{}'.format(args[1])
-
-                Button:
-                    text: 'Improvements/Upgrades'
-                    size_hint_y: None
-                    height: '95dp'
-                    on_release: categoryDropdown.select('Improvements/Upgrades')
-
-                Button:
-                    text: 'Social/Entertainment'
-                    size_hint_y: None
-                    height: '95dp'
-                    on_release: categoryDropdown.select('Social/Entertainment')
-
-                Button:
-                    text: 'Personal Care & Hygiene'
-                    size_hint_y: None
-                    height: '95dp'
-                    on_release: categoryDropdown.select('Personal Care & Hygiene')
-
-                Button:
-                    text: 'Savings'
-                    size_hint_y: None
-                    height: '95dp'
-                    on_release: categoryDropdown.select('Savings')
-
-        Button:
-            id: subBtn
+            on_text : root.updateSub()
+        Spinner:
+            id: subCategoryDropdown
+            size_hint: None, None
+            size: 1000, 44
+            pos_hint: {'center': (.5, .5)}
             text: 'Sub-Category'
-            on_release: subCategoryDropdown.open(self)
-            size_hint_y: None
-            height: '95dp'
-
-            Widget:
-                on_parent: subCategoryDropdown.dismiss()
-                subCategoryDropdown: subCategoryDropdown.__self__
-
-            DropDown:
-                id: subCategoryDropdown
-                on_select: subBtn.text = '{}'.format(args[1])
-
-                Button:
-                    text: 'Home'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Home')
-
-                Button:
-                    text: 'Automotive'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Automotive')
-
-                Button:
-                    text: 'Electronic'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Electronic')
-
-                Button:
-                    text: 'Dining Out'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Dining Out')
-
-                Button:
-                    text: 'Special Events'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Special Events')
-
-                Button:
-                    text: 'Games'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Games')
-
-                Button:
-                    text: 'Gifts'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Gifts')
-
-                Button:
-                    text: 'Subscriptions'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Subscriptions')
-
-                Button:
-                    text: 'Cosmetics'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Cosmetics')
-
-                Button:
-                    text: 'Clothes'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Clothes')
-
-                Button:
-                    text: 'Toiletries'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Toiletries')
-
-                Button:
-                    text: 'Memberships'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Memberships')
-
-                Button:
-                    text: 'Emergency Fund'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Emergency Fund')
-
-                Button:
-                    text: 'Asset Deposits'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Asset Deposits')
-
-                Button:
-                    text: 'Vacations'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Vacations')
-
-                Button:
-                    text: 'Appliances'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Appliances')
-
-                Button:
-                    text: 'Other'
-                    size_hint_y: None
-                    height: '40dp'
-                    on_release: subCategoryDropdown.select('Other')
-
         Label:
             text: 'Date (mm/dd/yyyy):'
             font_size: '40sp'
@@ -371,49 +268,7 @@ Builder.load_string("""
             on_press: root.manager.current = 'dash'
 
 """)
-
-def validSelection(category, subcategory ):
-    improveGroup = ('Improvements/Upgrades','Home','Automotive','Electronic','Other' )
-    socialGroup = ('Social/Entertainment','Dining Out','Special Events','Games', 'Gifts','Subscriptions','Other')
-    personalGroup = ('Personal Care & Hygiene', 'Cosmetics', 'Clothes', 'Toiletries', 'Memberships', 'Other')
-    savingGroup = ('Savings','Emergency Fund', 'Asset Deposits', 'Vacations', 'Appliances', 'Other')
-
-    # check whether or not the selected category and subcategory are compatible
-    if category in improveGroup:
-        if subcategory in improveGroup:
-            return True
-        else:
-         #error msg when category and subcategory do not match
-            popup = Popup(title='Error', content=Label(text='Error, for the improvements and upgrades category you must choose one of the following subcategories: \n Home, automotive, electronic, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-            popup.open()
-            return False
-    elif category in socialGroup:
-        if subcategory in socialGroup:
-            return True
-        else:
-         #error msg when category and subcategory do not match
-            popup = Popup(title='Error', content=Label(text='Error, for the social and entertainment category you must choose one of the following subcategories: \n Dining out, Special Events, Games, Gifts, Subscriptions, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-            popup.open()
-            return False
-    elif category in personalGroup:
-        if subcategory in personalGroup:
-            return True
-        else:
-         #error msg when category and subcategory do not match
-            popup = Popup(title='Error', content=Label(text='Error, for the Personal Care and hygiene category you must choose one of the following subcategories: \n Cosmetics, Clothes, Toiletries, Memberships, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-            popup.open()
-            return False
-    elif category in savingGroup:
-        if subcategory in savingGroup:
-            return True
-        else:
-         #error msg when category and subcategory do not match
-            popup = Popup(title='Error', content=Label(text='Error, for the Savings category you must choose one of the following subcategories: \n Emergency Fund, Asset Deposits, Vacations, Appliances, or other, please enter again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
-            popup.open()
-            return False
-    else:
-        return False
-# Declare both screens
+# Declare screens
 class LoginScreen(Screen):
     def getInput(self):
         # get user input for username
@@ -490,6 +345,10 @@ class Dashboard(Screen):
     remMonthlyBudgetAmt = StringProperty()
     remMonthlyBudgetAmt = '200';
 
+    def logoutUser(self):
+        #clear global variables
+        sm.current = 'login'
+
     pass
 
 class monthlyBudget(Screen):
@@ -524,6 +383,34 @@ class monthlyBudget(Screen):
     pass
 
 class Graphs(Screen):
+    def __init__(self, **kwargs):
+         super(Graphs, self).__init__(**kwargs)
+         # set values for drop down list
+         self.ids.timeList.values = ['Month', 'Year']
+         self.ids.graphList.values = ['Pie Chart', 'Histogram', 'Line Graph']
+    def downloadGraph(self):
+        # get location input
+         location = self.ids.saveLocation.text
+         # get month input
+         timeInput = self.ids.timeList.text
+         #get graph input
+         graphType = self.ids.graphList.text
+
+         # check that all fields are filled out
+         if timeInput != 'Month or Year' and graphType != 'Type of Graph' and location != '':
+             #check the path exists
+             # test path for debug C:\Users\payton\Desktop\testing
+             if os.path.exists(location):
+                 # call function to print graph. will pass in location, timeInput, and graphType
+                print('testing')
+             else:
+                 #error msg when location does not exist
+                popup = Popup(title='Error', content=Label(text='Error, location is not valid, please try again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+                popup.open()
+         else:
+             #error msg when all fields have not been filled out
+            popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
     pass
 
 class deleteExpense(Screen):
@@ -557,15 +444,30 @@ class deleteExpense(Screen):
      pass
 
 class enterExpenses(Screen):
-     #def __init__(self, **kwargs):
+     def __init__(self, **kwargs):
+         super(enterExpenses, self).__init__(**kwargs)
+         self.ids.categoryDropdown.values = ['Improvements/Upgrades', 'Social/Entertainment', 'Personal Care & Hygiene', 'Savings']
+
+     def updateSub(self):
+         category = self.ids.categoryDropdown.text
+
+         # populate subcategory when user chooses a category
+         if category == 'Improvements/Upgrades':
+             self.ids.subCategoryDropdown.values = ['Home','Automotive','Electronic','Other']
+         elif category == 'Social/Entertainment':
+             self.ids.subCategoryDropdown.values = ['Dining Out','Special Events','Games', 'Gifts','Subscriptions','Other']
+         elif category == 'Personal Care & Hygiene':
+             self.ids.subCategoryDropdown.values = ['Cosmetics', 'Clothes', 'Toiletries', 'Memberships', 'Other']
+         elif category ==  'Savings':
+             self.ids.subCategoryDropdown.values = ['Emergency Fund', 'Asset Deposits', 'Vacations', 'Appliances', 'Other']
 
      def addExpense(self):
 
          #get value for category
-         category = self.ids.categoryBtn.text
+         category = self.ids.categoryDropdown.text
 
          #get value for sub-category
-         subcategory = self.ids.subBtn.text
+         subcategory = self.ids.subCategoryDropdown.text
 
          expenseAmt = self.ids.expenseAmt.text
 
@@ -584,9 +486,6 @@ class enterExpenses(Screen):
                     popup.open()
              else:
                     if(expenseAmt.isdigit()):
-
-                        if(validSelection(category, subcategory)):
-
                             expenseSuccessful = True #function call to enter in an expense
                             if(expenseSuccessful):
                                 # msg when enter expense is  successful
@@ -620,7 +519,7 @@ sm.add_widget(deleteExpense(name='delete'))
 class TestApp(App):
 
     def build(self):
-        self.title = 'Foot Prints'
+        self.title = 'FootPrints'
         return sm
 
 if __name__ == '__main__':
