@@ -10,9 +10,11 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
 from kivy.uix.spinner import Spinner
+import matplotlib
 import matplotlib.pyplot as plt
 import re
 import os
+import numpy as np
 
 
 Config.set('graphics', 'width', '1000')
@@ -123,7 +125,7 @@ Builder.load_string("""
             font_size:50
             on_press: root.manager.current = 'monthB'
         Button:
-            text: 'Download Graphs'
+            text: 'View and Download Graphs'
             font_size:50
             on_press: root.manager.current = 'graph'
         Button:
@@ -166,7 +168,10 @@ Builder.load_string("""
         orientation: 'vertical'
 
         Label:
-            text: 'Download Graph'
+            text: 'View/Download'
+            font_size: '130sp'
+        Label:
+            text: 'Graphs'
             font_size: '130sp'
         Label:
             text: 'Generate graphs for: '
@@ -194,9 +199,13 @@ Builder.load_string("""
             multiline: False
             font_size:'50sp'
         Button:
-            text: 'Download'
+            text: 'Download Graph'
             font_size:50
             on_press:  root.downloadGraph()
+        Button:
+            text: 'View Graph'
+            font_size:50
+            on_press:  root.viewGraph()
         Button:
             text: 'Back to Dashboard'
             font_size:50
@@ -268,7 +277,97 @@ Builder.load_string("""
             on_press: root.manager.current = 'dash'
 
 """)
-# Declare screens
+#function to display percent and total of pie chart pieces
+def func(pct, allvals):
+    absolute = int(pct/100.*np.sum(allvals))
+    return "{:.1f}%\n({:d} )".format(pct, absolute)
+
+def generateGraphs(location, timeInput, graphType):
+    # get relevant information from the database for correct graph, return as array. also need to size figures
+    if graphType == 'Pie Chart':
+        # Data to plot
+        labels =  ['Improvements/Upgrades', 'Social/Entertainment', 'Personal Care & Hygiene', 'Savings'] # need category or subcategory as label in array
+        sizes = [215, 130, 245, 210] # need totaal for each type of expense for year or month
+        colors = ['lightseagreen', 'moccasin', 'salmon', 'palevioletred']
+        explode = (0.1, 0, 0, 0)  # explode 1st slice
+                     # test path for debug C:\Users\payton\Desktop\testing
+        # Plot
+        plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+        autopct=lambda pct: func(pct, sizes), shadow=True, startangle=140)
+        plt.title("Pie Chart")
+        plt.axis('equal')
+        plt.rcParams["figure.figsize"] = [30,15]
+
+        if location != "":
+            plt.savefig(location + "/" + "piechart.png")
+            #success msg when graph has been generated
+            popup = Popup(title='Success', content=Label(text='Success, your pie graph has been downloaded to your computer. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+        else:
+            matplotlib.pyplot.ion()
+            plt.show()
+            matplotlib.pyplot.ioff()
+
+    elif graphType == 'Histogram':
+        x = [21,22,23,4,5,6,77,8,9,10,31,32,33,34,35,36,37,18,49,50,100]
+        num_bins = len(x)
+        n, bins, patches = plt.hist(x, num_bins, facecolor='teal', alpha=0.5)
+        plt.title('Histogram Graph')
+        plt.xlabel('Expense Amount')
+        plt.rcParams["figure.figsize"] = [30,15]
+
+        if location != "":
+            plt.savefig(location + "/" + "Histogram.png")
+            #success msg when graph has been generated
+            popup = Popup(title='Success', content=Label(text='Success, your histogram has been downloaded to your computer. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+        else:
+            matplotlib.pyplot.ion()
+            plt.show()
+            matplotlib.pyplot.ioff()
+
+    elif graphType == 'Line Graph':
+        y = [450, 12345, 8645, 34553, 55677, 1233, 466, 764, 8900, 4342,1233, 89 ]
+        x = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+        plt.plot(x, y, color='cornflowerblue')
+        plt.xlabel('Month') #or day or week???
+        plt.ylabel('Expense')
+        plt.title('Line Graph')
+        plt.rcParams["figure.figsize"] = [30,15]
+
+        if location != "":
+            plt.savefig(location + "/" + "lineGraph.png")
+            #success msg when graph has been generated
+            popup = Popup(title='Success', content=Label(text='Success, your line graph has been downloaded to your computer. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+        else:
+            matplotlib.pyplot.ion()
+            plt.show()
+            matplotlib.pyplot.ioff()
+
+    elif graphType == 'Bar Graph':
+        category = ('Improvements/Upgrades', 'Social/Entertainment', 'Personal Care & Hygiene', 'Savings')
+        y_pos = np.arange(len(category))
+
+        x = [300,908,2000,123]
+
+        plt.bar(y_pos, x, align='center', alpha=0.5, color = 'rosybrown')
+        plt.xticks(y_pos, category)
+        plt.ylabel('Expense Amount')
+        plt.title('Bar Chart')
+        plt.rcParams["figure.figsize"] = [30,15]
+
+        if location != "":
+            plt.savefig(location + "/" + "barGraph.png")
+            #success msg when graph has been generated
+            popup = Popup(title='Success', content=Label(text='Success, your bar graph has been downloaded to your computer. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+        else:
+            matplotlib.pyplot.ion()
+            plt.show()
+            matplotlib.pyplot.ioff()
+            # Declare screens
 class LoginScreen(Screen):
     def getInput(self):
         # get user input for username
@@ -387,7 +486,7 @@ class Graphs(Screen):
          super(Graphs, self).__init__(**kwargs)
          # set values for drop down list
          self.ids.timeList.values = ['Month', 'Year']
-         self.ids.graphList.values = ['Pie Chart', 'Histogram', 'Line Graph']
+         self.ids.graphList.values = ['Pie Chart', 'Histogram', 'Line Graph', 'Bar Graph']
     def downloadGraph(self):
         # get location input
          location = self.ids.saveLocation.text
@@ -399,14 +498,26 @@ class Graphs(Screen):
          # check that all fields are filled out
          if timeInput != 'Month or Year' and graphType != 'Type of Graph' and location != '':
              #check the path exists
-             # test path for debug C:\Users\payton\Desktop\testing
              if os.path.exists(location):
-                 # call function to print graph. will pass in location, timeInput, and graphType
-                print('testing')
+                loc = location.replace("\\",'/')
+                generateGraphs(loc, timeInput, graphType)
              else:
                  #error msg when location does not exist
                 popup = Popup(title='Error', content=Label(text='Error, location is not valid, please try again. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
                 popup.open()
+         else:
+             #error msg when all fields have not been filled out
+            popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
+            popup.open()
+    def viewGraph(self):
+         # get month input
+         timeInput = self.ids.timeList.text
+         #get graph input
+         graphType = self.ids.graphList.text
+
+         # check that all fields are filled out
+         if timeInput != 'Month or Year' and graphType != 'Type of Graph':
+                generateGraphs("", timeInput, graphType)
          else:
              #error msg when all fields have not been filled out
             popup = Popup(title='Error', content=Label(text='Error, all fields must be filled out. \n \n To close this popup click anywhere.'),size=(700, 600), size_hint=(None, None))
